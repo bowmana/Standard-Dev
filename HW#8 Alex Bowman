@@ -1,0 +1,123 @@
+/*Alex Bowman
+ * Professor Silvestri
+ * HW#8
+ * 11/15/19
+ * Standard Deviation/Mean program
+ */
+package standard;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Scanner;
+
+public class STDV {
+	private final static String TITLE = "Mean/standard deviation program";
+	private final static String CONTINUE_PROMPT = "Do this again? [y/N] ";
+
+	public static void printData(double[] x) {
+		for (int i = 0; i < x.length; i++) {
+			System.out.print(x[i] + " ");
+			if ((i + 1) % 10 == 0) {
+				System.out.println();
+			}
+		}
+		System.out.println();
+	}
+
+	public static double findMean(double[] data) {
+		double mean = data[0];
+
+		for (int i = 1; i < data.length; i++) {
+
+			mean += data[i];
+
+		}
+		int sum = data.length;
+		return mean / sum;
+	}
+
+	public static double findStandarddev(double[] data) {
+		double differencessqrd = data[0];
+		for (int i = 1; i < data.length; i++) {
+			differencessqrd += data[i];
+
+		}
+
+		double d = differencessqrd / data.length;
+		double y = data[0];
+		for (int i = 1; i < data.length; i++) {
+			y = y - d;
+			y += data[i];
+		}
+		return Math.sqrt(y);
+
+	}
+
+	public static double[] generateArray(int size) {
+		double x[] = new double[size];
+		for (int i = 0; i < x.length; i++) {
+			x[i] = 1000 * Math.random();
+		}
+		return x;
+	}
+
+	public static double[] readDataFileFromWebServer(String filename) throws IOException {
+		URL url = new URL("https://cs.stcc.edu/~silvestri/csc111/data-500-15-5.txt" + filename);
+
+		Scanner fileInput = new Scanner(url.openStream());
+		int size = fileInput.nextInt();
+		double x[] = new double[size];
+		for (int i = 0; i < x.length; i++)
+			x[i] = fileInput.nextDouble();
+		fileInput.close();
+		return x;
+	}
+
+	public static double[] readDataFileFromLocalFileSystem(String filename) throws IOException {
+		File file = new File(filename);
+
+		Scanner fileInput = new Scanner(file);
+		int size = fileInput.nextInt();
+		double x[] = new double[size];
+		for (int i = 0; i < x.length; i++)
+			x[i] = fileInput.nextDouble();
+		fileInput.close();
+		return x;
+	}
+
+	public static void process(Scanner sc, String args[]) throws IOException {
+		System.out.println("Enter filename: ");
+		String filename = sc.nextLine();
+		// double data1[] = readDataFileFromWebServer(filename);
+		double data[] = readDataFileFromLocalFileSystem(filename);
+
+		printData(data);
+
+		System.out.print("Mean Value: ");
+		double mean = findMean(data);
+		System.out.println(mean);
+
+		System.out.print("Standard deviation Value: ");
+		double stdv = findStandarddev(data);
+		System.out.println(stdv);
+
+		// sc.nextLine();
+	}
+
+	private static boolean doThisAgain(Scanner sc, String prompt) {
+		System.out.print(prompt);
+		String doOver = sc.nextLine();
+		return doOver.trim().equalsIgnoreCase("Y");
+	}
+
+	public static void main(String args[]) throws IOException {
+		System.out.println("Welcome to " + TITLE);
+		Scanner sc = new Scanner(System.in);
+		do {
+			process(sc, args);
+		} while (doThisAgain(sc, CONTINUE_PROMPT));
+		sc.close();
+		System.out.println("Thank you for using " + TITLE);
+	}
+
+}
